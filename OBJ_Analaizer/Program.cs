@@ -8,7 +8,8 @@ namespace OBJ_Analaizer
     {
         static void Main(string[] args)
         {
-            string str = "3.obj";
+            Console.WriteLine("Enter a file name");
+            string str = Console.ReadLine();
             Dictionary<int, Vertex> dictVertex =  Parser.parseToVertex(str);
             Dictionary<int, Vertex> dictVertexNormal = Parser.parseToVertex(str);
             Dictionary<int, Face> dictFace = Parser.parseToFace(str);
@@ -42,7 +43,7 @@ namespace OBJ_Analaizer
             Console.WriteLine(counter3);
             Console.WriteLine(dictFace.Count);
 
-            StreamWriter swr = new StreamWriter("tets.obj");
+            StreamWriter swr = new StreamWriter("test.obj");
             foreach (var temp in dictVertex)
             {
                 string st = "v  " + temp.Value.X + " " + temp.Value.Y + " " + temp.Value.Z;
