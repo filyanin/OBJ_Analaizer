@@ -66,13 +66,14 @@ namespace OBJ_Analaizer
         public bool NearToVertical(double accuracy)
         {
             double xBase = 0;
-            double yBase = 0;
-            double zBase = 1;
+            double yBase = 1;
+            double zBase = 0;
+
 
             double scalar = Math.Abs(xBase * X + yBase * Y + zBase * Z);
 
-            if (scalar >= 1-accuracy)
-                return true;
+            if (scalar <= accuracy)
+                 return true;
             return false;
         }
     }
