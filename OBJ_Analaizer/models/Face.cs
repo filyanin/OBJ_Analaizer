@@ -50,5 +50,15 @@ namespace OBJ_Analaizer
         {
             this.Normal = new Normal(vertex1, vertex2, vertex3);
         }
+
+        public override string ToString()
+        {
+            string tmp = Convert.ToString(indexOfVertex1) + "/" + Convert.ToString(indexOfTexture1) + "/" + Convert.ToString(indexOfVertexNormal1);
+            tmp += " " + Convert.ToString(indexOfVertex2) + "/" + Convert.ToString(indexOfTexture2) + "/" + Convert.ToString(indexOfVertexNormal2);
+            tmp += " " + Convert.ToString(indexOfVertex3) + "/" + Convert.ToString(indexOfTexture3) + "/" + Convert.ToString(indexOfVertexNormal3);
+
+            return tmp;
+
+        }
     }
 }

@@ -19,6 +19,14 @@ namespace OBJ_Analaizer
 
         public double X { get => x; set => x = value; }
         public double Y { get => y; set => y = value; }
-        public double Z { get => z; set => z = value; }
+        public double Z { get => z; set => z = value; }    
+        
+        public override string ToString()
+        {
+            string tmp = Convert.ToString(X) + " " + Convert.ToString(Y) + " " + Convert.ToString(Z);
+            return tmp.Replace(",", ".");
+        }
     }
+
+
 }

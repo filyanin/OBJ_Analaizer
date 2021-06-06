@@ -74,107 +74,77 @@ namespace OBJ_Analaizer
             return buffer;
             
         }
-        public static void CreateObjFile(string nameOfFile, Dictionary<int, Vertex> vertexDictionary, Dictionary<int, Vertex> NormalVertexDictionary, Dictionary<int,Face> FaceDictionary)
+
+        public static void ChangeFaceDictionary(Dictionary<int, Face> dictionaryToChange, List<int> newArrayOfVertex, List<int> newArrayOfVertexNormal)
+        {
+            foreach (var tmp in dictionaryToChange)
+            {
+                tmp.Value.IndexOfVertex1 = newArrayOfVertex.IndexOf(tmp.Value.IndexOfVertex1) + 1;
+                tmp.Value.IndexOfVertex2 = newArrayOfVertex.IndexOf(tmp.Value.IndexOfVertex2) + 1;
+                tmp.Value.IndexOfVertex3 = newArrayOfVertex.IndexOf(tmp.Value.IndexOfVertex3) + 1;
+
+                tmp.Value.IndexOfVertexNormal1 = newArrayOfVertexNormal.IndexOf(tmp.Value.IndexOfVertexNormal1) + 1;
+                tmp.Value.IndexOfVertexNormal2 = newArrayOfVertexNormal.IndexOf(tmp.Value.IndexOfVertexNormal2) + 1;
+                tmp.Value.IndexOfVertexNormal3 = newArrayOfVertexNormal.IndexOf(tmp.Value.IndexOfVertexNormal3) + 1;
+            }
+        }
+
+
+        public static bool WriteVertexOrVertexNormalToObj(Dictionary<int, Vertex> dictionary, List<int> array, string type, StreamWriter sw)
+        {
+            if ((type == "v")||(type == "vn"))
+            {
+                for (int i = 0; i < array.Count; i++)
+                {
+                    Vertex point;
+                    dictionary.TryGetValue(array[i], out point);
+                    string str = type + " " + point.ToString();
+                    sw.WriteLine(str);
+                }
+                if (type == "v")
+                {
+                    sw.WriteLine("# " + (array.Count + 1) + " vertices");
+                }
+                else
+                {
+                    sw.WriteLine("# " + (array.Count + 1) + " vertex normals");
+                }
+                sw.WriteLine();
+                return true;
+            }
+            return false;
+        }
+
+        public static void WriteFaceToObj(Dictionary<int,Face> dictionary, string name, StreamWriter sw)
+        {
+            sw.WriteLine("o " + name);
+            sw.WriteLine("g " + name);
+            sw.WriteLine("usemtl default");
+            sw.WriteLine("s 1");
+            foreach (var tmp in dictionary)
+            {
+                sw.WriteLine("f " + tmp.Value.ToString());
+            }
+
+            sw.WriteLine("# 0 polygons - " + dictionary.Count + " triangles");
+        }
+        public static void WriteToObjFile(string nameOfFile, Dictionary<int, Vertex> vertexDictionary, Dictionary<int, Vertex> vertexNormalDictionary, Dictionary<int,Face> FaceDictionary, List<int> arrayOfNewVertex, List<int> arrayOfNewVertexNormal)
         {
             StreamWriter swr = new StreamWriter(nameOfFile);
-            foreach (var temp in vertexDictionary)
-            {
-                string st = "v  " + temp.Value.X + " " + temp.Value.Y + " " + temp.Value.Z;
-                st = st.Replace(",", ".");
-                swr.WriteLine(st);
-            }
-            foreach (var temp in NormalVertexDictionary)
-            {
-                string st = "vn " + temp.Value.X + " " + temp.Value.Y + " " + temp.Value.Z;
-                st = st.Replace(",", ".");
-                swr.WriteLine(st);
-            }
-            foreach (var temp in FaceDictionary)
-            {
-                string buf1 = temp.Value.IndexOfVertex1 + "/1/" + temp.Value.IndexOfVertexNormal1;
-                string buf2 = temp.Value.IndexOfVertex2 + "/1/" + temp.Value.IndexOfVertexNormal2;
-                string buf3 = temp.Value.IndexOfVertex3 + "/1/" + temp.Value.IndexOfVertexNormal3;
-                string st = "f " + buf1 + " " + buf2 + " " + buf3;
-                st = st.Replace(",", ".");
-                swr.WriteLine(st);
-            }
+            WriteVertexOrVertexNormalToObj(vertexDictionary, arrayOfNewVertex, "v", swr);
+            WriteVertexOrVertexNormalToObj(vertexNormalDictionary, arrayOfNewVertexNormal, "vn", swr);
+            WriteFaceToObj(FaceDictionary, nameOfFile, swr);
+            swr.Close();
         }
-
-        public static Dictionary<int, Vertex> getNewVertexDictionary(Dictionary<int,Vertex> lastDictionaryOfVertex, Dictionary<int,Face> faceDictionaryForChange,List<int> listOfUsingPoints)
-        {
-            Dictionary<int, Vertex> buf = new Dictionary<int, Vertex>(1);
- 
-            for (int i = 0; i < listOfUsingPoints.Count; i++)
-            {
-                int bufferIndex = listOfUsingPoints[i];
-
-                Vertex vertexTmp;
-                if (lastDictionaryOfVertex.TryGetValue(listOfUsingPoints[i], out vertexTmp))
-                {
-                    buf.Add(i + 1, vertexTmp);
-
-                foreach (var tmp in faceDictionaryForChange)
-                    {
-                        if (tmp.Value.IndexOfVertex1 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertex1 = i + 1;
-                        }
-                        if (tmp.Value.IndexOfVertex2 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertex2 = i + 1;
-                        }
-                        if (tmp.Value.IndexOfVertex3 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertex3 = i + 1;
-                        }
-                    }
-                }
-            } 
-            return buf;
-        }
-
-        public static Dictionary<int, Vertex> getNewVertexNormalDictionary(Dictionary<int, Vertex> lastDictionaryOfVertexNormal, Dictionary<int, Face> faceDictionaryForChange, List<int> listOfUsingPoints)
-        {
-            Dictionary<int, Vertex> buf = new Dictionary<int, Vertex>(1);
-
-            for (int i = 0; i < listOfUsingPoints.Count; i++)
-            {
-                int bufferIndex = listOfUsingPoints[i];
-
-                Vertex VertexNormalTmp;
-                if (lastDictionaryOfVertexNormal.TryGetValue(listOfUsingPoints[i], out VertexNormalTmp))
-                {
-                    buf.Add(i + 1, VertexNormalTmp);
-
-                    foreach (var tmp in faceDictionaryForChange)
-                    {
-                        if (tmp.Value.IndexOfVertexNormal1 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertexNormal1 = i + 1;
-                        }
-                        if (tmp.Value.IndexOfVertexNormal2 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertexNormal2 = i + 1;
-                        }
-                        if (tmp.Value.IndexOfVertexNormal3 == listOfUsingPoints[i])
-                        {
-                            tmp.Value.IndexOfVertexNormal3 = i + 1;
-                        }
-                    }
-                }
-            }
-            return buf;
-        }
-
-        public static void FinalOperationSet(string nameOfFile,  Dictionary<int, Face> newFaceDictionary, Dictionary<int, Vertex> oldVertexDictionary, Dictionary<int, Vertex> oldVertexNormalDictionary)
+        public static void CreateObjFile(string nameOfFile,  Dictionary<int, Face> newFaceDictionary, Dictionary<int, Vertex> VertexDictionary, Dictionary<int, Vertex> VertexNormalDictionary)
         {
             List<int> ArrayOfVertexIndex = Collector.GetArrayOfVertexIndex(newFaceDictionary);
             List<int> ArrayOfVertexNormalIndex = Collector.GetArrayOfVertexNormalIndex(newFaceDictionary);
 
-            Dictionary<int, Vertex> newVertex = getNewVertexDictionary(oldVertexDictionary, newFaceDictionary, ArrayOfVertexIndex);
-            Dictionary<int, Vertex> newVertexNormal = getNewVertexNormalDictionary(oldVertexNormalDictionary, newFaceDictionary, ArrayOfVertexNormalIndex);
+            ChangeFaceDictionary(newFaceDictionary, ArrayOfVertexIndex, ArrayOfVertexNormalIndex);
 
-            Collector.CreateObjFile(nameOfFile, newVertex, newVertexNormal, newFaceDictionary);
+            
+            WriteToObjFile(nameOfFile, VertexDictionary, VertexNormalDictionary, newFaceDictionary, ArrayOfVertexIndex, ArrayOfVertexNormalIndex);
         }
     }
 }

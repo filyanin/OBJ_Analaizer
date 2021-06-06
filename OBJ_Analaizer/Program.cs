@@ -10,8 +10,8 @@ namespace OBJ_Analaizer
         {
             Console.WriteLine("Enter a file name");
             string str = Console.ReadLine();
-            Dictionary<int, Vertex> dictVertex =  Parser.parseToVertex(str);
-            Dictionary<int, Vertex> dictVertexNormal = Parser.parseToVertex(str);
+            Dictionary<int, Vertex> dictVertex = Parser.parseToVOrVn(str, "v");
+            Dictionary<int, Vertex> dictVertexNormal = Parser.parseToVOrVn(str, "vn");
             Dictionary<int, Face> dictFace = Parser.parseToFace(str);
             Dictionary<int, Face> dictFaceVertical = new Dictionary<int, Face>(1);
             Dictionary<int, Face> dictFaceHorizontal = new Dictionary<int, Face>(1);
@@ -29,11 +29,11 @@ namespace OBJ_Analaizer
 
                 temp.Value.CountNormalVector(v1, v2, v3);
 
-                if (temp.Value.Normal.NearToVertical(0.05))
+                if (temp.Value.Normal.NearToVertical(0.1))
                 {
                     counter1++;
                     dictFaceVertical.Add(counter1 + 1, temp.Value);
-                } else if (temp.Value.Normal.NearToHorizontal(0.05)){
+                } else if (temp.Value.Normal.NearToHorizontal(0.1)){
                     counter2++;
                     dictFaceHorizontal.Add(counter2 + 1, temp.Value);
                 }
@@ -46,8 +46,8 @@ namespace OBJ_Analaizer
             Console.WriteLine("Общее количество " + dictFace.Count);
 
 
-            Collector.FinalOperationSet("Vertical.obj", dictFaceVertical, dictVertex, dictVertexNormal);
-            Collector.FinalOperationSet("Horizontal.obj", dictFaceHorizontal, dictVertex, dictVertexNormal);
+            Collector.CreateObjFile("Vertical.obj", dictFaceVertical, dictVertex, dictVertexNormal);
+            Collector.CreateObjFile("Horizontal.obj", dictFaceHorizontal, dictVertex, dictVertexNormal);
 
            
            
