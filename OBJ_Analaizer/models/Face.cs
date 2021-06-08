@@ -16,21 +16,21 @@ namespace OBJ_Analaizer
 
         internal Normal Normal { get; set; }
 
-        public Face(int indexOfVertex1, int indexOfVertex2, int indexOfVertex3, int indexOfVertexNormal1, int indexOfVertexNormal2, int indexOfVertexNormal3)
+        public Face(int _indexOfVertex1, int _indexOfVertex2, int _indexOfVertex3, int _indexOfVertexNormal1, int _indexOfVertexNormal2, int _indexOfVertexNormal3)
         {
-            this.IndexOfVertex1 = indexOfVertex1;
-            this.IndexOfVertex2 = indexOfVertex2;
-            this.IndexOfVertex3 = indexOfVertex3;
-            this.IndexOfVertexNormal1 = indexOfVertexNormal1;
-            this.IndexOfVertexNormal2 = indexOfVertexNormal2;
-            this.IndexOfVertexNormal3 = indexOfVertexNormal3;
-            this.Normal = null;
+            IndexOfVertex1 = _indexOfVertex1;
+            IndexOfVertex2 = _indexOfVertex2;
+            IndexOfVertex3 = _indexOfVertex3;
+            IndexOfVertexNormal1 = _indexOfVertexNormal1;
+            IndexOfVertexNormal2 = _indexOfVertexNormal2;
+            IndexOfVertexNormal3 = _indexOfVertexNormal3;
+            Normal = null;
 
         }
 
         public void  CountNormalVector(Vertex vertex1, Vertex vertex2, Vertex vertex3)
         {
-            this.Normal = new Normal(vertex1, vertex2, vertex3);
+            Normal = new Normal(vertex1, vertex2, vertex3);
         }
 
         public override string ToString()
