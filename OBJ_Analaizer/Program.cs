@@ -8,50 +8,58 @@ namespace OBJ_Analaizer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter a file name");
-            string str = Console.ReadLine();
-            Dictionary<int, Vertex> dictVertex = Parser.parseToVOrVn(str, "v");
-            Dictionary<int, Vertex> dictVertexNormal = Parser.parseToVOrVn(str, "vn");
-            Dictionary<int, Face> dictFace = Parser.parseToFace(str);
-            Dictionary<int, Face> dictFaceVertical = new Dictionary<int, Face>(1);
-            Dictionary<int, Face> dictFaceHorizontal = new Dictionary<int, Face>(1);
-            int counter1 = 0;
-            int counter2 = 0;
-            int counter3 = 0;
-            foreach (var temp in dictFace)
+            Console.WriteLine("Enter a file path");
+
+            string filePath = Console.ReadLine();
+            string line = "";
+
+            List<Vertex> vertices = new List<Vertex>();
+            List<Vertex> vertexNormal = new List<Vertex>();
+            List<Face> faces = new List<Face>();
+
+            using (StreamReader sr = new StreamReader(filePath))
             {
-                Vertex v1;
-                Vertex v2;
-                Vertex v3;
-                dictVertex.TryGetValue(temp.Value.IndexOfVertex1, out v1);
-                dictVertex.TryGetValue(temp.Value.IndexOfVertex2, out v2);
-                dictVertex.TryGetValue(temp.Value.IndexOfVertex3, out v3);
+               
+                while (!sr.EndOfStream)
+                { 
+                    line = sr.ReadLine().Replace("  ", " ").Replace(".", ",");
+                    if (!Parser.TryParseStringToVertex(line, vertices))
+                        if (!Parser.TryParseStringToVertexNormal(line, vertexNormal))
+                            Parser.TryParseToFace(line, faces);
 
-                temp.Value.CountNormalVector(v1, v2, v3);
-
-                if (temp.Value.Normal.NearToVertical(0.1))
-                {
-                    counter1++;
-                    dictFaceVertical.Add(counter1 + 1, temp.Value);
-                } else if (temp.Value.Normal.NearToHorizontal(0.1)){
-                    counter2++;
-                    dictFaceHorizontal.Add(counter2 + 1, temp.Value);
                 }
-                else
-                    counter3++;
             }
-            Console.WriteLine("Вертикальные треугольники " + counter1);
-            Console.WriteLine("Горизонтальные треугольники " + counter2);
-            Console.WriteLine("Другие треугольники " + counter3);
-            Console.WriteLine("Общее количество " + dictFace.Count);
+
+            foreach (var tmp in faces)
+            {
+                tmp.Normal = new Normal(vertices[tmp.IndexOfVertex1 - 1], vertices[tmp.IndexOfVertex2 - 1], vertices[tmp.IndexOfVertex3 - 1]);
+            }
+
+            List<Face> verticalFaces = FacesAnalizer.SearchVerticalFaces(faces, 0.4);
+            List<Face> horizontalFaces = FacesAnalizer.SearchHorizontalFaces(faces, 0.01);
+
+            //Начало теста применения
+
+            //Удаление
 
 
-            Collector.CreateObjFile("Vertical.obj", dictFaceVertical, dictVertex, dictVertexNormal);
-            Collector.CreateObjFile("Horizontal.obj", dictFaceHorizontal, dictVertex, dictVertexNormal);
+            Console.WriteLine("Удалено из горизонтального массива" + FacesAnalizer.DeleteLonelyTriangle(horizontalFaces, 2));
+            Console.WriteLine("Удалено из вертикального массива" + FacesAnalizer.DeleteLonelyTriangle(verticalFaces, 2));
 
-           
-           
-            Console.ReadLine();
+            //Восстановление
+             for (int i = 0; i < 1; i++)
+             {
+                 Console.WriteLine("hor: " + FacesAnalizer.SearchLostHorizontalPoint(faces, horizontalFaces));
+                 Console.WriteLine("vert: " + FacesAnalizer.SearchLostVerticalPoint(faces, verticalFaces));
+             }
+            
+            Console.WriteLine("Вертикальные треугольники " + verticalFaces.Count);
+            Console.WriteLine("Горизонтальные треугольники " + horizontalFaces.Count);
+            Console.WriteLine("Общее количество " +  faces.Count);
+
+            Collector.WriteToObjFile(verticalFaces, vertices, vertexNormal, "vertical.obj");
+            Collector.WriteToObjFile(horizontalFaces, vertices, vertexNormal, "horizontal.obj");
+
         }
     }
 }

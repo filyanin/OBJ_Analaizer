@@ -14,70 +14,48 @@ namespace OBJ_Analaizer
             return false;
         }
 
-        static string[] parseString(string str, string splitString)
+        static public bool TryParseStringToVertex(string line, List<Vertex> listOfVertex)
         {
-            string[] tmp;
-            str = str.Replace(".", ",");
-            while (str != str.Replace("  ", " "))
-                str = str.Replace("  ", " ");
-            tmp = str.Split(splitString);
-            return tmp;
-        }
-        static public Dictionary<int, Vertex> parseToVOrVn(string str, string type)//ret null if not v or vn
-        {
-            if ((type == "v") || (type == "vn"))
+            string[] parts = line.Split(" ");
+            if (parts[0]  == "v")
             {
-                Dictionary<int, Vertex> dict = new Dictionary<int, Vertex>(1);
-                string line;
-                string[] parts;
-
-                StreamReader sr = new StreamReader(str);
-
-                while (!sr.EndOfStream)
-                {
-                    line = sr.ReadLine();
-                    parts = parseString(line, " ");
-
-                    if (IsTarget(type, parts[0]))
-                    {
-                        dict.Add(dict.Count + 1, new Vertex(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3])));
-                    }
-                }
-                sr.Close();
-                return dict;
+                listOfVertex.Add(new Vertex(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3])));
+                return true;
             }
-            return null;
+            return false;
         }
 
-        static public Dictionary<int, Face> parseToFace(string str)
+        static public bool TryParseStringToVertexNormal(string line, List<Vertex> listOfVertex)
         {
-            Dictionary<int, Face> dict = new Dictionary<int, Face>(1);
-            string line;
-            string[] parts;
+            string[] parts = line.Split(" ");
+            if (parts[0] == "vn")
+            {
+                listOfVertex.Add(new Vertex(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3])));
+                return true;
+            }
+            return false;
+        }
+
+        static public bool TryParseToFace(string line, List<Face> listOfFace)
+        {
+            string[] parts = line.Split(" ");
             string[] numbers1;
             string[] numbers2;
             string[] numbers3;
-
-            StreamReader sr = new StreamReader(str);
-
-            while (!sr.EndOfStream)
+           
+            if (IsTarget("f", parts[0]))
             {
-                line = sr.ReadLine();
-                parts = parseString(line, " ");
+                numbers1 = parts[1].Split("/");
+                numbers2 = parts[2].Split("/");
+                numbers3 = parts[3].Split("/");
 
-                if (IsTarget("f", parts[0]))
-                {
-                    numbers1 = parseString(parts[1],"/");
-                    numbers2 = parseString(parts[2], "/");
-                    numbers3 = parseString(parts[3], "/");
+                listOfFace.Add(new Face(Convert.ToInt32(numbers1[0]), Convert.ToInt32(numbers2[0]), Convert.ToInt32(numbers3[0]), Convert.ToInt32(numbers1[2]), Convert.ToInt32(numbers2[2]), Convert.ToInt32(numbers3[2])));
 
-                    Face temp = new Face(Convert.ToInt32(numbers1[0]), Convert.ToInt32(numbers2[0]), Convert.ToInt32(numbers3[0]), Convert.ToInt32(numbers1[2]), Convert.ToInt32(numbers2[2]), Convert.ToInt32(numbers3[2]), 1, 1, 1);
-                    dict.Add(dict.Count + 1, temp);
-                }
+                return true;
             }
-            sr.Close();
-            return dict;
+            return false;
         }
+            
 
 
     }
