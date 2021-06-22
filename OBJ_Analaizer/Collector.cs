@@ -64,5 +64,17 @@ namespace OBJ_Analaizer
             }
         }
 
+
+        public static void ExperementalWriteAllPartOfSurface(List<Face> faces,List<Face> currentFaces, List<Vertex> vertices, List<Vertex> vertexNormal, List<List<int>> listOfIndexFacesUsingPoints, int accuracy, string name)
+        {
+            int i = 0;
+            foreach (var tmp in FacesAnalizer.ExperementalGetAllSurface(listOfIndexFacesUsingPoints, faces, currentFaces,accuracy))
+            {
+                Collector.WriteToObjFile(tmp, vertices, vertexNormal, name + "_#_" + i + ".obj");
+                Console.WriteLine(name + "_#_" + i + " записан");
+                i++;
+            }
+        }
+
     }
 }

@@ -36,7 +36,7 @@ namespace OBJ_Analaizer
             return false;
         }
 
-        static public bool TryParseToFace(string line, List<Face> listOfFace)
+        static public bool TryParseToFace(string line, List<Face> listOfFace, int number)
         {
             string[] parts = line.Split(" ");
             string[] numbers1;
@@ -49,10 +49,10 @@ namespace OBJ_Analaizer
                 numbers2 = parts[2].Split("/");
                 numbers3 = parts[3].Split("/");
 
-                listOfFace.Add(new Face(Convert.ToInt32(numbers1[0]), Convert.ToInt32(numbers2[0]), Convert.ToInt32(numbers3[0]), Convert.ToInt32(numbers1[2]), Convert.ToInt32(numbers2[2]), Convert.ToInt32(numbers3[2])));
-
+                listOfFace.Add(new Face(Convert.ToInt32(numbers1[0]), Convert.ToInt32(numbers2[0]), Convert.ToInt32(numbers3[0]), Convert.ToInt32(numbers1[2]), Convert.ToInt32(numbers2[2]), Convert.ToInt32(numbers3[2]), number));
                 return true;
             }
+
             return false;
         }
             

@@ -13,10 +13,11 @@ namespace OBJ_Analaizer
         public int IndexOfVertexNormal1 { get; set; }
         public int IndexOfVertexNormal2 { get; set; }
         public int IndexOfVertexNormal3 { get; set; }
+        public int BaseNumber { get; set; }
 
         internal Normal Normal { get; set; }
 
-        public Face(int _indexOfVertex1, int _indexOfVertex2, int _indexOfVertex3, int _indexOfVertexNormal1, int _indexOfVertexNormal2, int _indexOfVertexNormal3)
+        public Face(int _indexOfVertex1, int _indexOfVertex2, int _indexOfVertex3, int _indexOfVertexNormal1, int _indexOfVertexNormal2, int _indexOfVertexNormal3, int _baseNumber)
         {
             IndexOfVertex1 = _indexOfVertex1;
             IndexOfVertex2 = _indexOfVertex2;
@@ -25,6 +26,7 @@ namespace OBJ_Analaizer
             IndexOfVertexNormal2 = _indexOfVertexNormal2;
             IndexOfVertexNormal3 = _indexOfVertexNormal3;
             Normal = null;
+            BaseNumber = _baseNumber;
 
         }
 
@@ -36,6 +38,15 @@ namespace OBJ_Analaizer
         public override string ToString()
         {
             return "f " + Convert.ToString(IndexOfVertex1) + "//" + Convert.ToString(IndexOfVertexNormal1) + " " + Convert.ToString(IndexOfVertex2) + "//" + Convert.ToString(IndexOfVertexNormal2) + " " + Convert.ToString(IndexOfVertex3) + "//" + Convert.ToString(IndexOfVertexNormal3);
+        }
+
+        public bool IfUsingCurrentPoint(int point)
+        {
+            if ((point == IndexOfVertex1)||(point == IndexOfVertex2)||(point == IndexOfVertex3))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
